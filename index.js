@@ -15,3 +15,86 @@ const pokedex = [
   { id: 52, name: "Miaouss", type: "normal", level: 9 },
   { id: 133, name: "Evoli", type: "normal", level: 10 }
 ];
+//Pokemon + Limites
+//if ma limite existe
+
+app.get('/api/pokemon',(req,res)=>{
+var limit = req.query.limit
+if (limit){
+    //Je teste si ma limite est valide
+    if (limit > 0) {
+        // Ma limite est valide
+        res.send(pokedex.slice(0, limit));
+    }else {
+        res.send('ERREUR 400')
+    }
+}else {
+    //Pas de limite
+    res.send(pokedex)
+}
+})
+
+//Pokemon /ID
+app.get('/api/pokemon/:id',(req,res)=>{
+  var ID = req.params.id
+ 
+  if(ID > 0){
+    var Identifiant = pokedex.find(p => p.id == ID)
+    if(Identifiant == undefined){
+      res.send("ERREUR 404")
+    }
+    else{
+         res.send(Identifiant)
+    }
+  }
+  else{
+    res.send('ERREUR 400')
+  }
+})
+
+//Pokemon par Type
+app.get('/api/type/:type' ,(req,res)=>{
+  var TYPE = req.params.type.toLowerCase()
+ 
+  var saltype = pokedex.filter(p => p.type == TYPE)
+  if (saltype.length == 0){
+    res.send("ERREUR 404")
+  }
+  else{
+      res.send(saltype)
+  }
+})
+
+//Pokemon par lettre
+app.get('/api/search' ,(req,res)=>{
+  var lettres = req.query.name.toLowerCase()
+  if(lettres){
+    var poke = pokedex.filter(p => p.name.toLowerCase().includes(lettres))
+    if (poke.length==0){
+      res.send("ERREUR 404")
+    }
+    else{
+      res.send(poke)
+    }
+  }
+  else{
+    res.send("ERREUR 400")
+  }
+})
+
+//Pokemon par Niveau
+app.get('/api/level/:min' ,(req,res)=>{
+  var niveau = req.params.min
+  if(niveau > 0){
+  var eligible = pokedex.filter(p => p.level >= niveau)
+  if(eligible.length==0){
+    res.send("ERREUR 404")
+  }
+  else{
+    res.send(eligible)
+  }
+  }
+  else{
+    res.send("ERREUR 400")
+  }
+})
